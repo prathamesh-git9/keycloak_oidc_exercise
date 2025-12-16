@@ -1,0 +1,46 @@
+{
+  "realm": "exercise",
+  "enabled": true,
+  "roles": {
+    "realm": [
+      { "name": "my-role" }
+    ]
+  },
+  "users": [
+    {
+      "username": "alice",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "alice123", "temporary": false }
+      ],
+      "realmRoles": ["my-role"]
+    },
+    {
+      "username": "bob",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "bob123", "temporary": false }
+      ],
+      "realmRoles": []
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "frontend-app",
+      "name": "frontend-app",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "redirectUris": ["http://localhost:8081/login/oauth2/code/keycloak"],
+      "webOrigins": ["http://localhost:8081"]
+    },
+    {
+      "clientId": "calendar",
+      "name": "calendar",
+      "enabled": true,
+      "publicClient": true
+    }
+  ]
+}
