@@ -1,0 +1,27 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>frontend-app</title>
+</head>
+<body>
+<h1>Calendar</h1>
+
+<p>
+    Logged in as: <strong th:text="${username}">user</strong>
+</p>
+
+<form th:action="@{/logout}" method="post">
+    <button type="submit">Logout</button>
+</form>
+
+<h2>Events</h2>
+<ul>
+    <li th:each="e : ${events}">
+        <span th:text="${e.title}">Title</span>
+        <span> at </span>
+        <span th:text="${e.startsAt}">Time</span>
+    </li>
+</ul>
+</body>
+</html>
