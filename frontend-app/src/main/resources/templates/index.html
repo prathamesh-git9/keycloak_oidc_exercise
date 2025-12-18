@@ -12,8 +12,10 @@
 </p>
 
 <form th:action="@{/logout}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
     <button type="submit">Logout</button>
 </form>
+
 
 <h2>Events</h2>
 <ul>

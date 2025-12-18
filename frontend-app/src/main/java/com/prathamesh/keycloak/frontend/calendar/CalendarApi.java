@@ -20,7 +20,9 @@ public class CalendarApi {
                 .build();
     }
 
-
+    // Prod note: Timeouts check is needed
+    // The RestClient builder should be configure with explicit Connect and Read timeouts .
+    // Defaults will create issue of thread exhaustion.
     public List<CalendarEvent> getEvents(String accessToken) {
         return restClient.get()
                 .uri("/api/calendar")
