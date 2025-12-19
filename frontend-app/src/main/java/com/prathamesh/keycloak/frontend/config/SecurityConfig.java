@@ -51,6 +51,13 @@ public class SecurityConfig {
                 )
                 .oauth2Client(Customizer.withDefaults())
                 .logout(logout -> logout
+                .logoutRequestMatcher(request -> {
+                    String method = request.getMethod();
+                    String path = request.getRequestURI();
+                    boolean matchesPath = path != null && path.endsWith("/logout");
+                    boolean matchesMethod = "POST".equalsIgnoreCase(method) || "GET".equalsIgnoreCase(method);
+                    return matchesPath && matchesMethod;
+                })
                 .logoutSuccessHandler(oidcLogoutSuccessHandler)
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
