@@ -3,7 +3,9 @@
   "enabled": true,
   "roles": {
     "realm": [
-      { "name": "my-role" }
+      {
+        "name": "my-role"
+      }
     ]
   },
   "users": [
@@ -12,16 +14,26 @@
       "enabled": true,
       "emailVerified": true,
       "credentials": [
-        { "type": "password", "value": "alice123", "temporary": false }
+        {
+          "type": "password",
+          "value": "alice123",
+          "temporary": false
+        }
       ],
-      "realmRoles": ["my-role"]
+      "realmRoles": [
+        "my-role"
+      ]
     },
     {
       "username": "bob",
       "enabled": true,
       "emailVerified": true,
       "credentials": [
-        { "type": "password", "value": "bob123", "temporary": false }
+        {
+          "type": "password",
+          "value": "bob123",
+          "temporary": false
+        }
       ],
       "realmRoles": []
     }
@@ -33,8 +45,19 @@
       "enabled": true,
       "publicClient": true,
       "standardFlowEnabled": true,
-      "redirectUris": ["http://localhost:8081/login/oauth2/code/keycloak"],
-      "webOrigins": ["http://localhost:8081"]
+      "redirectUris": [
+        "http://localhost:8081/login/oauth2/code/keycloak",
+        "http://localhost:8081/logged-out"
+      ],
+      "webOrigins": [
+        "http://localhost:8081"
+      ],
+      "defaultClientScopes": [
+        "web-origins",
+        "roles",
+        "profile",
+        "email"
+      ]
     },
     {
       "clientId": "calendar",

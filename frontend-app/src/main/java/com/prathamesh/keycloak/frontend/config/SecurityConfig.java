@@ -1,6 +1,9 @@
 package com.prathamesh.keycloak.frontend.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,8 +27,8 @@ public class SecurityConfig {
 
     @Bean
     LogoutSuccessHandler oidcLogoutSuccessHandler(ClientRegistrationRepository repo) {
-        OidcClientInitiatedLogoutSuccessHandler handler =
-                new OidcClientInitiatedLogoutSuccessHandler(repo);
+        OidcClientInitiatedLogoutSuccessHandler handler
+                = new OidcClientInitiatedLogoutSuccessHandler(repo);
         handler.setPostLogoutRedirectUri("{baseUrl}/logged-out");
         return handler;
     }
@@ -39,22 +42,45 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/error", "/forbidden", "/logged-out", "/login**", "/oauth2/**").permitAll()
-                        .anyRequest().hasAuthority(ROLE_PREFIX + requiredRole)
+                .requestMatchers("/error", "/forbidden", "/logged-out", "/login**", "/oauth2/**").permitAll()
+                .anyRequest().hasAuthority(ROLE_PREFIX + requiredRole)
                 )
                 .oauth2Login(oauth -> oauth
-                        .userInfoEndpoint(userInfo -> userInfo.oidcUserService(keycloakOidcUserService))
-                        .defaultSuccessUrl("/", true)
+                .userInfoEndpoint(userInfo -> userInfo.oidcUserService(keycloakOidcUserService))
+                .defaultSuccessUrl("/", true)
                 )
                 .oauth2Client(Customizer.withDefaults())
                 .logout(logout -> logout
-                        .logoutSuccessHandler(oidcLogoutSuccessHandler)
-                        .invalidateHttpSession(true)
-                        .clearAuthentication(true)
-                        .deleteCookies("JSESSIONID")
+                .logoutSuccessHandler(oidcLogoutSuccessHandler)
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .deleteCookies("JSESSIONID")
                 )
                 .exceptionHandling(ex -> ex.accessDeniedPage("/forbidden"));
 
         return http.build();
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<String> extractRolesFromClaims(Map<String, Object> claims) {
+        // Try realm_access.roles
+        Object realmAccess = claims.get("realm_access");
+        if (realmAccess instanceof Map) {
+            Map<String, Object> realmAccessMap = (Map<String, Object>) realmAccess;
+            Object roles = realmAccessMap.get("roles");
+            if (roles instanceof List) {
+                return ((List<?>) roles).stream()
+                        .map(Object::toString)
+                        .collect(Collectors.toList());
+            }
+        }
+        // Try direct roles claim
+        Object roles = claims.get("roles");
+        if (roles instanceof List) {
+            return ((List<?>) roles).stream()
+                    .map(Object::toString)
+                    .collect(Collectors.toList());
+        }
+        return List.of();
     }
 }
